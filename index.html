@@ -8,35 +8,36 @@
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#1a1a2e; color:#eee; }
-.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:linear-gradient(180deg,rgba(26,26,46,0.97),rgba(26,26,46,0.85)); padding:12px 16px; backdrop-filter:blur(12px); display:flex; align-items:center; gap:12px; }
-.header h1 { font-size:1.05em; white-space:nowrap; color:#fff; flex:0 0 auto; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#eef1f5; color:#1a1a2e; }
+.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:rgba(255,255,255,0.96); padding:12px 16px; box-shadow:0 1px 8px rgba(0,0,0,0.12); display:flex; align-items:center; gap:12px; }
+.header h1 { font-size:1.05em; white-space:nowrap; color:#1a1a2e; flex:0 0 auto; }
 .btns { display:flex; gap:8px; flex:1 1 auto; min-width:0; }
-.btn { padding:8px 16px; border:2px solid #444; border-radius:8px; background:transparent; color:#aaa; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; flex:0 0 auto; }
-.btn:hover { border-color:#888; color:#fff; }
+.btn { padding:8px 16px; border:2px solid #c9cfd8; border-radius:8px; background:#fff; color:#556; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; flex:0 0 auto; }
+.btn:hover { border-color:#9aa3ad; color:#222; }
 .btn.active { color:#fff; }
-.btn.active.v1 { border-color:#e74c3c; background:rgba(231,76,60,0.18); }
-.btn.active.v2 { border-color:#3498db; background:rgba(52,152,219,0.18); }
-.btn.active.v3 { border-color:#2ecc71; background:rgba(46,204,113,0.18); }
+.btn.active.v1 { border-color:#e74c3c; background:#e74c3c; }
+.btn.active.v2 { border-color:#3498db; background:#3498db; }
+.btn.active.v3 { border-color:#27ae60; background:#27ae60; }
 .btn.v1:hover { border-color:#e74c3c; }
 .btn.v2:hover { border-color:#3498db; }
-.btn.v3:hover { border-color:#2ecc71; }
+.btn.v3:hover { border-color:#27ae60; }
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
-.status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.92); border:1px solid #333; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#ccc; display:none; pointer-events:none; }
+.status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; pointer-events:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .status.show { display:block; }
-.info-panel { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.94); border-radius:12px; padding:12px 18px; backdrop-filter:blur(12px); border:1px solid #333; max-width:94vw; display:none; }
+.info-panel { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.97); border-radius:12px; padding:12px 18px; box-shadow:0 2px 16px rgba(0,0,0,0.18); border:1px solid #e0e3e8; max-width:94vw; display:none; }
 .info-panel.show { display:block; }
 .info-head { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
-.info-head h3 { font-size:1em; margin:0; }
+.info-head h3 { font-size:1em; margin:0; color:#1a1a2e; }
 .info-toggle { font-size:1.1em; color:#888; padding:0 4px; user-select:none; display:none; }
-.info-panel .stops { display:flex; gap:16px 20px; flex-wrap:wrap; font-size:0.8em; color:#aaa; line-height:1.55; margin-top:8px; }
-.info-panel .stops .day { color:#e67e22; }
-.legend { position:fixed; top:64px; right:10px; z-index:2000; background:rgba(26,26,46,0.9); border-radius:8px; padding:8px 12px; border:1px solid #333; font-size:0.72em; display:none; line-height:1.6; }
+.info-panel .stops { display:flex; gap:16px 20px; flex-wrap:wrap; font-size:0.8em; color:#556; line-height:1.55; margin-top:8px; }
+.info-panel .stops .day { color:#e67e22; font-weight:600; }
+.legend { position:fixed; top:64px; right:10px; z-index:2000; background:rgba(255,255,255,0.94); border-radius:8px; padding:8px 12px; border:1px solid #e0e3e8; font-size:0.72em; display:none; line-height:1.6; color:#444; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .legend.show { display:block; }
-.leaflet-popup-content-wrapper { background:#1a1a2e; color:#eee; border-radius:8px; font-size:0.85em; }
-.leaflet-popup-tip { background:#1a1a2e; }
-.leaflet-control-zoom a { background:#1a1a2e; color:#eee; border-color:#333; }
-.leaflet-control-attribution { background:rgba(26,26,46,0.8); color:#666; font-size:10px; }
+.leaflet-popup-content-wrapper { background:#fff; color:#1a1a2e; border-radius:8px; font-size:0.85em; box-shadow:0 2px 12px rgba(0,0,0,0.2); }
+.leaflet-popup-tip { background:#fff; }
+.leaflet-control-zoom a { background:#fff; color:#333; border-color:#ccc; }
+.leaflet-control-zoom a:hover { background:#f0f0f0; }
+.leaflet-control-attribution { background:rgba(255,255,255,0.8); color:#888; font-size:10px; }
 
 /* ── MOBILE ─────────────────────────────── */
 @media (max-width: 760px) {
@@ -107,7 +108,7 @@ const routes = {
     {kind:'night', n:'10',  days:'22.11', place:'Беттис-Бей', lat:-34.3518, lng:18.9168, desc:'Колония пингвинов'},
     {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'90 км через Гордонс-Бей'},
   ]},
-3: { name:'Китовая Дорога + Мыс Игольный', color:'#2ecc71',
+3: { name:'Китовая Дорога + Мыс Игольный', color:'#27ae60',
   stops:[
     {kind:'start', n:'1–2', days:'13–14.11', ...CPT, desc:'Столовая гора, Waterfront'},
     {kind:'night', n:'3',   days:'15.11', ...CAPE, desc:'60 км, 1 ч · Чапманс-Пик, Cape Point; ночёвка Саймонс-Таун/Нордхук'},
@@ -121,8 +122,8 @@ const routes = {
 
 // ── MAP ─────────────────────────────────────
 const map = L.map('map').setView([-33.8, 20], 8);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-  attribution:'&copy; CartoDB', maxZoom:16
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+  attribution:'&copy; OpenStreetMap &copy; CartoDB', maxZoom:16
 }).addTo(map);
 
 let layers = { faint:null, glow:null, core:null, markers:[] };
@@ -132,14 +133,14 @@ function stopIcon(s, i, len) {
   const isTerminal = (i===0 || i===len-1);
   if(isTerminal){
     const sz=20;
-    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#f1c40f;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;border:2px solid #fff;">✈</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
+    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#f1c40f;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">✈</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
   }
   if(s.kind==='day'){
     const sz=20;
-    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#e67e22;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:2px solid #fff;">★</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
+    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#e67e22;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">★</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
   }
   const sz=22;
-  return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;color:#fff;border:2px solid #fff;">${s.n}</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
+  return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:rgba(26,26,46,0.85);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">${s.n}</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
 }
 
 // ── OSRM road geometry ──────────────────────
@@ -171,8 +172,8 @@ async function buildPath(r) {
 
 // ── ANIMATION ───────────────────────────────
 function animateRoute(r, full, stopIdx) {
-  layers.faint = L.polyline(full, { color:r.color, weight:3, opacity:0.22, dashArray:'3 6' }).addTo(map);
-  layers.glow = L.polyline([], { color:r.color, weight:13, opacity:0.28, lineCap:'round', lineJoin:'round' }).addTo(map);
+  layers.faint = L.polyline(full, { color:r.color, weight:3, opacity:0.45, dashArray:'3 7' }).addTo(map);
+  layers.glow = L.polyline([], { color:r.color, weight:12, opacity:0.30, lineCap:'round', lineJoin:'round' }).addTo(map);
   layers.core = L.polyline([], { color:r.color, weight:4.5, opacity:1, lineCap:'round', lineJoin:'round' }).addTo(map);
 
   const cum = [0];
