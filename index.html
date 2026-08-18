@@ -21,6 +21,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .btn.v1:hover { border-color:#e74c3c; }
 .btn.v2:hover { border-color:#3498db; }
 .btn.v3:hover { border-color:#27ae60; }
+.btn.v4:hover { border-color:#9b59b6; }
+.btn.active.v4 { border-color:#9b59b6; background:#9b59b6; }
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
 .status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; pointer-events:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .status.show { display:block; }
@@ -65,6 +67,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут</button>
 <button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье</button>
 <button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога</button>
+<button class="btn v4" onclick="selectRoute(4,this)">4. Базы (без переездов)</button>
 </div>
 </div>
 <div id="map"></div>
@@ -117,6 +120,14 @@ const routes = {
     {kind:'night', n:'7–8', days:'19–20.11', place:'Свеллендам', lat:-34.0220, lng:20.4417, desc:'Bontebok NP, Marloth NR'},
     {kind:'night', n:'9–10',days:'21–22.11', place:'Франшхук', lat:-33.9100, lng:19.1200, desc:'Винный трамвай'},
     {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'60 км, 1 ч'},
+  ]},
+4: { name:'Базы + радиальные выезды (минимум переездов)', color:'#9b59b6',
+  stops:[
+    {kind:'start', n:'1–3', days:'13–15.11', ...CPT, desc:'3 ночи · Столовая гора, Waterfront, винодельни (выезд)'},
+    {kind:'day',   n:'★',   days:'15.11 · день-трип', ...CAPE, desc:'Петля полуострова из Кейптауна (~120 км)'},
+    {kind:'night', n:'4–6', days:'16–18.11', place:'Херманус', lat:-34.4092, lng:19.2504, desc:'3 ночи · киты; выезд на Мыс Игольный; вино Hemel-en-Aarde'},
+    {kind:'night', n:'7–9', days:'19–21.11', place:'Плеттенберг-Бей / Найсна', lat:-34.0528, lng:23.3757, desc:'3 ночи · выезды: Тситсикамма, Аудсхорн, Найсна'},
+    {kind:'end',   n:'10–11', days:'22–23.11', ...CPT, desc:'2 ночи · возврат через Route 62, обед в Свеллендаме'},
   ]}
 };
 
@@ -245,7 +256,7 @@ async function selectRoute(id, btn) {
   });
   map.closePopup();
 
-  document.querySelectorAll('.btn').forEach(b=>{b.classList.remove('active','v1','v2','v3');});
+  document.querySelectorAll('.btn').forEach(b=>{b.classList.remove('active','v1','v2','v3','v4');});
   btn.classList.add('active','v'+id);
 
   const r = routes[id];
