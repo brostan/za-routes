@@ -2,16 +2,17 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ЮАР — Кейптаун (13–24 ноября 2026) — Маршруты по дорогам</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#1a1a2e; color:#eee; }
-.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:linear-gradient(180deg,rgba(26,26,46,0.97),rgba(26,26,46,0.85)); padding:14px 20px; backdrop-filter:blur(12px); display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-.header h1 { font-size:1.05em; white-space:nowrap; color:#fff; }
-.btns { display:flex; gap:8px; flex-wrap:wrap; }
-.btn { padding:8px 18px; border:2px solid #444; border-radius:8px; background:transparent; color:#aaa; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; }
+.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:linear-gradient(180deg,rgba(26,26,46,0.97),rgba(26,26,46,0.85)); padding:12px 16px; backdrop-filter:blur(12px); display:flex; align-items:center; gap:12px; }
+.header h1 { font-size:1.05em; white-space:nowrap; color:#fff; flex:0 0 auto; }
+.btns { display:flex; gap:8px; flex:1 1 auto; min-width:0; }
+.btn { padding:8px 16px; border:2px solid #444; border-radius:8px; background:transparent; color:#aaa; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; flex:0 0 auto; }
 .btn:hover { border-color:#888; color:#fff; }
 .btn.active { color:#fff; }
 .btn.active.v1 { border-color:#e74c3c; background:rgba(231,76,60,0.18); }
@@ -21,40 +22,64 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .btn.v2:hover { border-color:#3498db; }
 .btn.v3:hover { border-color:#2ecc71; }
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
-.status { position:fixed; top:70px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.92); border:1px solid #333; border-radius:10px; padding:8px 18px; font-size:0.85em; color:#ccc; display:none; }
+.status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.92); border:1px solid #333; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#ccc; display:none; pointer-events:none; }
 .status.show { display:block; }
-.info-panel { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.92); border-radius:12px; padding:14px 22px; backdrop-filter:blur(12px); border:1px solid #333; max-width:92vw; display:none; }
+.info-panel { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(26,26,46,0.94); border-radius:12px; padding:12px 18px; backdrop-filter:blur(12px); border:1px solid #333; max-width:94vw; display:none; }
 .info-panel.show { display:block; }
-.info-panel h3 { font-size:1em; margin-bottom:6px; }
-.info-panel .stops { display:flex; gap:18px; flex-wrap:wrap; font-size:0.8em; color:#aaa; line-height:1.6; }
+.info-head { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
+.info-head h3 { font-size:1em; margin:0; }
+.info-toggle { font-size:1.1em; color:#888; padding:0 4px; user-select:none; display:none; }
+.info-panel .stops { display:flex; gap:16px 20px; flex-wrap:wrap; font-size:0.8em; color:#aaa; line-height:1.55; margin-top:8px; }
 .info-panel .stops .day { color:#e67e22; }
-.legend { position:fixed; top:70px; right:12px; z-index:2000; background:rgba(26,26,46,0.9); border-radius:8px; padding:10px 14px; border:1px solid #333; font-size:0.78em; display:none; line-height:1.7; }
+.legend { position:fixed; top:64px; right:10px; z-index:2000; background:rgba(26,26,46,0.9); border-radius:8px; padding:8px 12px; border:1px solid #333; font-size:0.72em; display:none; line-height:1.6; }
 .legend.show { display:block; }
 .leaflet-popup-content-wrapper { background:#1a1a2e; color:#eee; border-radius:8px; font-size:0.85em; }
 .leaflet-popup-tip { background:#1a1a2e; }
 .leaflet-control-zoom a { background:#1a1a2e; color:#eee; border-color:#333; }
 .leaflet-control-attribution { background:rgba(26,26,46,0.8); color:#666; font-size:10px; }
+
+/* ── MOBILE ─────────────────────────────── */
+@media (max-width: 760px) {
+  .header { padding:8px 10px; gap:8px; }
+  .header h1 { font-size:0.85em; }
+  .btns { overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+  .btns::-webkit-scrollbar { display:none; }
+  .btn { padding:8px 13px; font-size:0.8em; border-width:2px; }
+  .status { top:56px; font-size:0.72em; padding:5px 12px; }
+  .legend { top:56px; font-size:0.66em; padding:6px 9px; }
+  .info-panel { bottom:8px; padding:10px 14px; max-width:96vw; }
+  .info-head h3 { font-size:0.9em; }
+  .info-toggle { display:inline-block; }
+  .info-panel .stops { display:none; }
+  .info-panel.expanded .stops { display:flex; max-height:38vh; overflow-y:auto; padding-right:4px; font-size:0.78em; gap:8px 16px; }
+  .leaflet-popup-content-wrapper { font-size:0.8em; }
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-<h1>ЮАР · 13–24 ноября 2026</h1>
+<h1>ЮАР · 13–24.11</h1>
 <div class="btns">
-<button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут + Route 62</button>
-<button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье + Седерберг</button>
-<button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога + Мыс Игольный</button>
+<button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут</button>
+<button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье</button>
+<button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога</button>
 </div>
 </div>
 <div id="map"></div>
 <div class="status" id="status"></div>
 <div class="legend show" id="legend"></div>
-<div class="info-panel show" id="info"></div>
+<div class="info-panel show" id="info">
+  <div class="info-head" onclick="toggleInfo()">
+    <h3 id="info-title"></h3>
+    <span class="info-toggle" id="info-toggle">▾</span>
+  </div>
+  <div class="stops" id="info-stops"></div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── DATA ────────────────────────────────────
-// kind: 'start'/'end' (✈), 'day' (★ дневной заезд), 'night' (нумерованная ночёвка)
 const CAPE = { place:'Мыс Доброй Надежды / Cape Point', lat:-34.3569, lng:18.4740 };
 const CPT = { place:'Кейптаун', lat:-33.9249, lng:18.4241 };
 
@@ -137,13 +162,8 @@ async function buildPath(r) {
   const stopIdx = [];
   for(let i=0;i<segments.length;i++){
     const seg = segments[i];
-    if(i===0){
-      stopIdx.push(0);
-      for(const c of seg) full.push(c);
-    } else {
-      stopIdx.push(full.length-1);
-      for(let k=1;k<seg.length;k++) full.push(seg[k]);
-    }
+    if(i===0){ stopIdx.push(0); for(const c of seg) full.push(c); }
+    else { stopIdx.push(full.length-1); for(let k=1;k<seg.length;k++) full.push(seg[k]); }
   }
   stopIdx.push(full.length-1);
   return { full, stopIdx };
@@ -159,7 +179,6 @@ function animateRoute(r, full, stopIdx) {
   for(let i=1;i<full.length;i++) cum.push(cum[i-1] + map.distance(full[i-1], full[i]));
   const total = cum[cum.length-1];
   const stopPos = stopIdx.map(i => cum[i]);
-
   const mps = total / 10000;
   const pauseMs = 1400;
 
@@ -183,43 +202,35 @@ function animateRoute(r, full, stopIdx) {
     if(lastTs === null) lastTs = ts;
     const dt = Math.min(ts - lastTs, 50);
     lastTs = ts;
-
     if(pausing){
       if(ts - pauseStart >= pauseMs){ pausing = false; map.closePopup(); }
       else { anim = requestAnimationFrame(frame); return; }
     }
-
     pos += mps * dt;
-
     if(nextStop < stopPos.length && pos >= stopPos[nextStop]){
-      pos = stopPos[nextStop];
-      idx = stopIdx[nextStop];
-      apply();
+      pos = stopPos[nextStop]; idx = stopIdx[nextStop]; apply();
       if(layers.markers[nextStop]) layers.markers[nextStop].openPopup();
-      pausing = true; pauseStart = ts;
-      nextStop++;
-      if(nextStop >= stopPos.length){
-        anim = null;
-        setStatus('Маршрут завершён · ' + r.name);
-        return;
-      }
-      anim = requestAnimationFrame(frame);
-      return;
+      pausing = true; pauseStart = ts; nextStop++;
+      if(nextStop >= stopPos.length){ anim = null; setStatus('Маршрут завершён · ' + r.name); return; }
+      anim = requestAnimationFrame(frame); return;
     }
-
     while(idx < full.length-1 && cum[idx+1] <= pos) idx++;
     apply();
-
     if(pos >= total){
       if(layers.markers[layers.markers.length-1]) layers.markers[layers.markers.length-1].openPopup();
-      setStatus('Маршрут завершён · ' + r.name);
-      anim = null;
-      return;
+      setStatus('Маршрут завершён · ' + r.name); anim = null; return;
     }
     anim = requestAnimationFrame(frame);
   }
-
   anim = requestAnimationFrame(frame);
+}
+
+// ── INFO TOGGLE ─────────────────────────────
+function toggleInfo(){
+  const inf = document.getElementById('info');
+  const tg = document.getElementById('info-toggle');
+  inf.classList.toggle('expanded');
+  tg.textContent = inf.classList.contains('expanded') ? '▴' : '▾';
 }
 
 // ── SELECT ROUTE ────────────────────────────
@@ -244,11 +255,9 @@ async function selectRoute(id, btn) {
     `<span style="color:#e67e22">★</span> Мыс Доброй Надежды`;
   document.getElementById('legend').classList.add('show');
 
-  const inf = document.getElementById('info');
-  inf.innerHTML = `<h3 style="color:${r.color}">${r.name}</h3><div class="stops">`+
-    r.stops.map(s=>`<div class="${s.kind==='day'?'day':''}"><b>${s.n}</b> ${s.place}<br><small>${s.days}${s.desc?' · '+s.desc:''}</small></div>`).join('')+
-    '</div>';
-  inf.classList.add('show');
+  document.getElementById('info-title').innerHTML = `<span style="color:${r.color}">●</span> ${r.name}`;
+  document.getElementById('info-stops').innerHTML =
+    r.stops.map(s=>`<div class="${s.kind==='day'?'day':''}"><b>${s.n}</b> ${s.place}<br><small>${s.days}${s.desc?' · '+s.desc:''}</small></div>`).join('');
 
   r.stops.forEach((s,i)=>{
     const m = L.marker([s.lat,s.lng],{icon:stopIcon(s,i,r.stops.length)})
