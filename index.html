@@ -2,36 +2,34 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ЮАР — Кейптаун (13–24 ноября 2026) — Маршруты по дорогам</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#eef1f5; color:#1a1a2e; }
-.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:rgba(255,255,255,0.96); padding:12px 16px; box-shadow:0 1px 8px rgba(0,0,0,0.12); display:flex; align-items:center; gap:12px; }
-.header h1 { font-size:1.05em; white-space:nowrap; color:#1a1a2e; flex:0 0 auto; }
-.btns { display:flex; gap:8px; flex:1 1 auto; min-width:0; }
-.btn { padding:8px 16px; border:2px solid #c9cfd8; border-radius:8px; background:#fff; color:#556; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; flex:0 0 auto; }
+.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:rgba(255,255,255,0.96); padding:12px 16px; box-shadow:0 1px 8px rgba(0,0,0,0.12); display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.header h1 { font-size:1.05em; white-space:nowrap; color:#1a1a2e; }
+.btns { display:flex; gap:8px; flex-wrap:wrap; }
+.btn { padding:8px 16px; border:2px solid #c9cfd8; border-radius:8px; background:#fff; color:#555566; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; }
 .btn:hover { border-color:#9aa3ad; color:#222; }
 .btn.active { color:#fff; }
 .btn.active.v1 { border-color:#e74c3c; background:#e74c3c; }
 .btn.active.v2 { border-color:#3498db; background:#3498db; }
 .btn.active.v3 { border-color:#27ae60; background:#27ae60; }
+.btn.active.v4 { border-color:#9b59b6; background:#9b59b6; }
 .btn.v1:hover { border-color:#e74c3c; }
 .btn.v2:hover { border-color:#3498db; }
 .btn.v3:hover { border-color:#27ae60; }
 .btn.v4:hover { border-color:#9b59b6; }
-.btn.active.v4 { border-color:#9b59b6; background:#9b59b6; }
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
-.status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; pointer-events:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
+.status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .status.show { display:block; }
 .info-panel { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.97); border-radius:12px; padding:12px 18px; box-shadow:0 2px 16px rgba(0,0,0,0.18); border:1px solid #e0e3e8; max-width:94vw; display:none; }
 .info-panel.show { display:block; }
-.info-head { display:flex; align-items:center; justify-content:space-between; gap:12px; cursor:pointer; }
-.info-head h3 { font-size:1em; margin:0; color:#1a1a2e; }
-.info-toggle { font-size:1.1em; color:#888; padding:0 4px; user-select:none; display:none; }
-.info-panel .stops { display:flex; gap:16px 20px; flex-wrap:wrap; font-size:0.8em; color:#556; line-height:1.55; margin-top:8px; }
+.info-panel h3 { font-size:1em; margin-bottom:6px; color:#1a1a2e; }
+.info-panel .stops { display:flex; gap:16px 20px; flex-wrap:wrap; font-size:0.8em; color:#555566; line-height:1.55; }
 .info-panel .stops .day { color:#e67e22; font-weight:600; }
 .legend { position:fixed; top:64px; right:10px; z-index:2000; background:rgba(255,255,255,0.94); border-radius:8px; padding:8px 12px; border:1px solid #e0e3e8; font-size:0.72em; display:none; line-height:1.6; color:#444; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .legend.show { display:block; }
@@ -40,50 +38,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .leaflet-control-zoom a { background:#fff; color:#333; border-color:#ccc; }
 .leaflet-control-zoom a:hover { background:#f0f0f0; }
 .leaflet-control-attribution { background:rgba(255,255,255,0.8); color:#888; font-size:10px; }
-
-/* ── MOBILE ─────────────────────────────── */
-@media (max-width: 760px) {
-  .header { padding:8px 10px; gap:8px; }
-  .header h1 { font-size:0.85em; }
-  .btns { overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
-  .btns::-webkit-scrollbar { display:none; }
-  .btn { padding:8px 13px; font-size:0.8em; border-width:2px; }
-  .status { top:56px; font-size:0.72em; padding:5px 12px; }
-  .legend { top:56px; font-size:0.66em; padding:6px 9px; }
-  .info-panel { bottom:8px; padding:10px 14px; max-width:96vw; }
-  .info-head h3 { font-size:0.9em; }
-  .info-toggle { display:inline-block; }
-  .info-panel .stops { display:none; }
-  .info-panel.expanded .stops { display:flex; max-height:38vh; overflow-y:auto; padding-right:4px; font-size:0.78em; gap:8px 16px; }
-  .leaflet-popup-content-wrapper { font-size:0.8em; }
-}
 </style>
 </head>
 <body>
 
 <div class="header">
-<h1>ЮАР · 13–24.11</h1>
+<h1>ЮАР · 13–24 ноября 2026</h1>
 <div class="btns">
-<button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут</button>
-<button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье</button>
-<button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога</button>
-<button class="btn v4" onclick="selectRoute(4,this)">4. Базы (без переездов)</button>
+<button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут + Route 62</button>
+<button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье + Седерберг</button>
+<button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога + Мыс Игольный</button>
+<button class="btn v4" onclick="selectRoute(4,this)">4. По подтверждённым бронированиям</button>
 </div>
 </div>
 <div id="map"></div>
 <div class="status" id="status"></div>
 <div class="legend show" id="legend"></div>
-<div class="info-panel show" id="info">
-  <div class="info-head" onclick="toggleInfo()">
-    <h3 id="info-title"></h3>
-    <span class="info-toggle" id="info-toggle">▾</span>
-  </div>
-  <div class="stops" id="info-stops"></div>
-</div>
+<div class="info-panel show" id="info"></div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ── DATA ────────────────────────────────────
+// kind: 'start'/'end' (✈), 'day' (★ дневной заезд), 'night' (нумерованная ночёвка)
 const CAPE = { place:'Мыс Доброй Надежды / Cape Point', lat:-34.3569, lng:18.4740 };
 const CPT = { place:'Кейптаун', lat:-33.9249, lng:18.4241 };
 
@@ -121,20 +97,19 @@ const routes = {
     {kind:'night', n:'9–10',days:'21–22.11', place:'Франшхук', lat:-33.9100, lng:19.1200, desc:'Винный трамвай'},
     {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'60 км, 1 ч'},
   ]},
-4: { name:'Базы + радиальные выезды (минимум переездов)', color:'#9b59b6',
+4: { name:'По подтверждённым бронированиям', color:'#9b59b6',
   stops:[
-    {kind:'start', n:'1–3', days:'13–15.11', ...CPT, desc:'3 ночи · Столовая гора, Waterfront, винодельни (выезд)'},
-    {kind:'day',   n:'★',   days:'15.11 · день-трип', ...CAPE, desc:'Петля полуострова из Кейптауна (~120 км)'},
-    {kind:'night', n:'4–6', days:'16–18.11', place:'Херманус', lat:-34.4092, lng:19.2504, desc:'3 ночи · киты; выезд на Мыс Игольный; вино Hemel-en-Aarde'},
-    {kind:'night', n:'7–9', days:'19–21.11', place:'Плеттенберг-Бей / Найсна', lat:-34.0528, lng:23.3757, desc:'3 ночи · выезды: Тситсикамма, Аудсхорн, Найсна'},
-    {kind:'end',   n:'10–11', days:'22–23.11', ...CPT, desc:'2 ночи · возврат через Route 62, обед в Свеллендаме'},
+    {kind:'start', n:'1–3', days:'13–15.11 · 3 ночи', place:'Кейптаун · 10 Hospital Street', lat:-33.9150439, lng:18.4207844, desc:'Подтверждённая бронь · Home in Cape Town · хозяин Jayson'},
+    {kind:'night', n:'4–6', days:'16–18.11 · 3 ночи', place:'De Kelders · 142 De Villiers Street', lat:-34.5542352, lng:19.3687153, desc:'Подтверждённая бронь · Home in De Kelders · хозяин Ethan · из Кейптауна: 162 км · ≈2 ч 16 мин'},
+    {kind:'night', n:'7–9', days:'19–21.11 · 3 ночи', place:'Плеттенберг-Бей · 9 Pharos Avenue', lat:-34.0623365, lng:23.3734005, desc:'Подтверждённая бронь · Home in Plettenberg Bay · хозяин Jonathan · из De Kelders: 440 км · ≈5 ч 28 мин'},
+    {kind:'end',   n:'10–11', days:'22–24.11 · 2 ночи', place:'Кейптаун · временная точка', lat:-33.9249, lng:18.4241, desc:'Бронь ещё не выбрана; точка поставлена в центре Кейптауна · из Плеттенберг-Бея: 523 км · ≈6 ч 25 мин'},
   ]}
 };
 
 // ── MAP ─────────────────────────────────────
 const map = L.map('map').setView([-33.8, 20], 8);
 L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution:'&copy; OpenStreetMap &copy; CartoDB', maxZoom:16
+  attribution:'&copy; CartoDB', maxZoom:16
 }).addTo(map);
 
 let layers = { faint:null, glow:null, core:null, markers:[] };
@@ -144,11 +119,11 @@ function stopIcon(s, i, len) {
   const isTerminal = (i===0 || i===len-1);
   if(isTerminal){
     const sz=20;
-    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#f1c40f;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">✈</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
+    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#f1c40f;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;border:2px solid #fff;">✈</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
   }
   if(s.kind==='day'){
     const sz=20;
-    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#e67e22;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">★</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
+    return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:#e67e22;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;border:2px solid #fff;">★</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
   }
   const sz=22;
   return L.divIcon({html:`<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:rgba(26,26,46,0.85);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:10px;color:#fff;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,0.35);">${s.n}</div>`,iconSize:[sz+2,sz+2],iconAnchor:[(sz+2)/2,(sz+2)/2],className:''});
@@ -174,8 +149,13 @@ async function buildPath(r) {
   const stopIdx = [];
   for(let i=0;i<segments.length;i++){
     const seg = segments[i];
-    if(i===0){ stopIdx.push(0); for(const c of seg) full.push(c); }
-    else { stopIdx.push(full.length-1); for(let k=1;k<seg.length;k++) full.push(seg[k]); }
+    if(i===0){
+      stopIdx.push(0);
+      for(const c of seg) full.push(c);
+    } else {
+      stopIdx.push(full.length-1);
+      for(let k=1;k<seg.length;k++) full.push(seg[k]);
+    }
   }
   stopIdx.push(full.length-1);
   return { full, stopIdx };
@@ -183,14 +163,15 @@ async function buildPath(r) {
 
 // ── ANIMATION ───────────────────────────────
 function animateRoute(r, full, stopIdx) {
-  layers.faint = L.polyline(full, { color:r.color, weight:3, opacity:0.45, dashArray:'3 7' }).addTo(map);
-  layers.glow = L.polyline([], { color:r.color, weight:12, opacity:0.30, lineCap:'round', lineJoin:'round' }).addTo(map);
+  layers.faint = L.polyline(full, { color:r.color, weight:3, opacity:0.22, dashArray:'3 6' }).addTo(map);
+  layers.glow = L.polyline([], { color:r.color, weight:13, opacity:0.28, lineCap:'round', lineJoin:'round' }).addTo(map);
   layers.core = L.polyline([], { color:r.color, weight:4.5, opacity:1, lineCap:'round', lineJoin:'round' }).addTo(map);
 
   const cum = [0];
   for(let i=1;i<full.length;i++) cum.push(cum[i-1] + map.distance(full[i-1], full[i]));
   const total = cum[cum.length-1];
   const stopPos = stopIdx.map(i => cum[i]);
+
   const mps = total / 10000;
   const pauseMs = 1400;
 
@@ -214,35 +195,43 @@ function animateRoute(r, full, stopIdx) {
     if(lastTs === null) lastTs = ts;
     const dt = Math.min(ts - lastTs, 50);
     lastTs = ts;
+
     if(pausing){
       if(ts - pauseStart >= pauseMs){ pausing = false; map.closePopup(); }
       else { anim = requestAnimationFrame(frame); return; }
     }
+
     pos += mps * dt;
+
     if(nextStop < stopPos.length && pos >= stopPos[nextStop]){
-      pos = stopPos[nextStop]; idx = stopIdx[nextStop]; apply();
+      pos = stopPos[nextStop];
+      idx = stopIdx[nextStop];
+      apply();
       if(layers.markers[nextStop]) layers.markers[nextStop].openPopup();
-      pausing = true; pauseStart = ts; nextStop++;
-      if(nextStop >= stopPos.length){ anim = null; setStatus('Маршрут завершён · ' + r.name); return; }
-      anim = requestAnimationFrame(frame); return;
+      pausing = true; pauseStart = ts;
+      nextStop++;
+      if(nextStop >= stopPos.length){
+        anim = null;
+        setStatus('Маршрут завершён · ' + r.name);
+        return;
+      }
+      anim = requestAnimationFrame(frame);
+      return;
     }
+
     while(idx < full.length-1 && cum[idx+1] <= pos) idx++;
     apply();
+
     if(pos >= total){
       if(layers.markers[layers.markers.length-1]) layers.markers[layers.markers.length-1].openPopup();
-      setStatus('Маршрут завершён · ' + r.name); anim = null; return;
+      setStatus('Маршрут завершён · ' + r.name);
+      anim = null;
+      return;
     }
     anim = requestAnimationFrame(frame);
   }
-  anim = requestAnimationFrame(frame);
-}
 
-// ── INFO TOGGLE ─────────────────────────────
-function toggleInfo(){
-  const inf = document.getElementById('info');
-  const tg = document.getElementById('info-toggle');
-  inf.classList.toggle('expanded');
-  tg.textContent = inf.classList.contains('expanded') ? '▴' : '▾';
+  anim = requestAnimationFrame(frame);
 }
 
 // ── SELECT ROUTE ────────────────────────────
@@ -261,15 +250,19 @@ async function selectRoute(id, btn) {
 
   const r = routes[id];
 
+  const dayLegend = r.stops.some(s=>s.kind==='day')
+    ? ` &nbsp; <span style="color:#e67e22">★</span> дневной заезд`
+    : '';
   document.getElementById('legend').innerHTML =
     `<b style="color:${r.color}">●</b> ${r.name}<br>`+
-    `<span style="color:#f1c40f">✈</span> старт/финиш &nbsp; `+
-    `<span style="color:#e67e22">★</span> Мыс Доброй Надежды`;
+    `<span style="color:#f1c40f">✈</span> старт/финиш` + dayLegend;
   document.getElementById('legend').classList.add('show');
 
-  document.getElementById('info-title').innerHTML = `<span style="color:${r.color}">●</span> ${r.name}`;
-  document.getElementById('info-stops').innerHTML =
-    r.stops.map(s=>`<div class="${s.kind==='day'?'day':''}"><b>${s.n}</b> ${s.place}<br><small>${s.days}${s.desc?' · '+s.desc:''}</small></div>`).join('');
+  const inf = document.getElementById('info');
+  inf.innerHTML = `<h3 style="color:${r.color}">${r.name}</h3><div class="stops">`+
+    r.stops.map(s=>`<div class="${s.kind==='day'?'day':''}"><b>${s.n}</b> ${s.place}<br><small>${s.days}${s.desc?' · '+s.desc:''}</small></div>`).join('')+
+    '</div>';
+  inf.classList.add('show');
 
   r.stops.forEach((s,i)=>{
     const m = L.marker([s.lat,s.lng],{icon:stopIcon(s,i,r.stops.length)})
