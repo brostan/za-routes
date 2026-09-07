@@ -9,20 +9,8 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background:#eef1f5; color:#1a1a2e; }
-.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:rgba(255,255,255,0.96); padding:12px 16px; box-shadow:0 1px 8px rgba(0,0,0,0.12); display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.header { position:fixed; top:0; left:0; right:0; z-index:2000; background:rgba(255,255,255,0.96); padding:12px 16px; box-shadow:0 1px 8px rgba(0,0,0,0.12); display:flex; align-items:center; }
 .header h1 { font-size:1.05em; white-space:nowrap; color:#1a1a2e; }
-.btns { display:flex; gap:8px; flex-wrap:wrap; }
-.btn { padding:8px 16px; border:2px solid #c9cfd8; border-radius:8px; background:#fff; color:#555566; cursor:pointer; font-size:0.9em; transition:all 0.2s; white-space:nowrap; }
-.btn:hover { border-color:#9aa3ad; color:#222; }
-.btn.active { color:#fff; }
-.btn.active.v1 { border-color:#e74c3c; background:#e74c3c; }
-.btn.active.v2 { border-color:#3498db; background:#3498db; }
-.btn.active.v3 { border-color:#27ae60; background:#27ae60; }
-.btn.active.v4 { border-color:#9b59b6; background:#9b59b6; }
-.btn.v1:hover { border-color:#e74c3c; }
-.btn.v2:hover { border-color:#3498db; }
-.btn.v3:hover { border-color:#27ae60; }
-.btn.v4:hover { border-color:#9b59b6; }
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
 .status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .status.show { display:block; }
@@ -43,13 +31,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 <body>
 
 <div class="header">
-<h1>ЮАР · 13–24 ноября 2026</h1>
-<div class="btns">
-<button class="btn v1 active" onclick="selectRoute(1,this)">1. Гарден Рут + Route 62</button>
-<button class="btn v2" onclick="selectRoute(2,this)">2. Западное побережье + Седерберг</button>
-<button class="btn v3" onclick="selectRoute(3,this)">3. Китовая Дорога + Мыс Игольный</button>
-<button class="btn v4" onclick="selectRoute(4,this)">4. По подтверждённым бронированиям</button>
-</div>
+<h1>ЮАР · подтверждённый маршрут · 13–24 ноября 2026</h1>
 </div>
 <div id="map"></div>
 <div class="status" id="status"></div>
@@ -63,48 +45,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 const CAPE = { place:'Мыс Доброй Надежды / Cape Point', lat:-34.3569, lng:18.4740 };
 const CPT = { place:'Кейптаун', lat:-33.9249, lng:18.4241 };
 
-const routes = {
-1: { name:'Гарден Рут + Route 62', color:'#e74c3c',
-  stops:[
-    {kind:'start', n:'1–2', days:'13–14.11', ...CPT, desc:'Столовая гора, Waterfront, пингвины Боулдерс'},
-    {kind:'day',   n:'★',   days:'15.11 · по пути', ...CAPE, desc:'Петля полуострова · Чапманс-Пик, маяк, смотровая (~120 км за день)'},
-    {kind:'night', n:'3',   days:'15.11', place:'Стелленбош / Франшхук', lat:-33.9321, lng:18.8602, desc:'Винодельни'},
-    {kind:'night', n:'4–5', days:'16–17.11', place:'Херманус', lat:-34.4092, lng:19.2504, desc:'Киты · южный гладкий кит'},
-    {kind:'night', n:'6',   days:'18.11', place:'Найсна', lat:-34.0351, lng:23.0465, desc:'380 км, 4.5 ч'},
-    {kind:'night', n:'7–8', days:'19–20.11', place:'Тситсикамма / Плеттенберг', lat:-33.9714, lng:23.8852, desc:'Storm River, банджи Блукранс'},
-    {kind:'night', n:'9',   days:'21.11', place:'Аудсхорн', lat:-33.5884, lng:22.2035, desc:'Страусиные фермы, пещеры Канго'},
-    {kind:'night', n:'10',  days:'22.11', place:'Монтагю / Робертсон', lat:-33.7880, lng:20.1175, desc:'Вино по Route 62'},
-    {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'180 км, 2.5 ч'},
-  ]},
-2: { name:'Западное побережье + Седерберг', color:'#3498db',
-  stops:[
-    {kind:'start', n:'1–2', days:'13–14.11', ...CPT, desc:'Столовая гора, Waterfront'},
-    {kind:'day',   n:'★',   days:'14.11 · день-трип', ...CAPE, desc:'Туда-обратно из Кейптауна (~125 км) · Чапманс-Пик, Cape Point'},
-    {kind:'night', n:'3–4', days:'15–16.11', place:'Лангебан / West Coast NP', lat:-33.0928, lng:18.0334, desc:'Лагуна, каяки, фламинго'},
-    {kind:'night', n:'5–6', days:'17–18.11', place:'Седерберг / Кланвильям', lat:-32.1792, lng:18.8886, desc:'Скалы, Stadsaal Caves, росписи сан'},
-    {kind:'night', n:'7',   days:'19.11', place:'Тульбах', lat:-33.2852, lng:19.1382, desc:'Винная долина'},
-    {kind:'night', n:'8–9', days:'20–21.11', place:'Франшхук', lat:-33.9100, lng:19.1200, desc:'Винный трамвай'},
-    {kind:'night', n:'10',  days:'22.11', place:'Беттис-Бей', lat:-34.3518, lng:18.9168, desc:'Колония пингвинов'},
-    {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'90 км через Гордонс-Бей'},
-  ]},
-3: { name:'Китовая Дорога + Мыс Игольный', color:'#27ae60',
-  stops:[
-    {kind:'start', n:'1–2', days:'13–14.11', ...CPT, desc:'Столовая гора, Waterfront'},
-    {kind:'night', n:'3',   days:'15.11', ...CAPE, desc:'60 км, 1 ч · Чапманс-Пик, Cape Point; ночёвка Саймонс-Таун/Нордхук'},
-    {kind:'night', n:'4–5', days:'16–17.11', place:'Херманус', lat:-34.4092, lng:19.2504, desc:'Киты, Fernkloof'},
-    {kind:'night', n:'6',   days:'18.11', place:'Мыс Игольный', lat:-34.8333, lng:20.0167, desc:'Южная точка Африки'},
-    {kind:'night', n:'7–8', days:'19–20.11', place:'Свеллендам', lat:-34.0220, lng:20.4417, desc:'Bontebok NP, Marloth NR'},
-    {kind:'night', n:'9–10',days:'21–22.11', place:'Франшхук', lat:-33.9100, lng:19.1200, desc:'Винный трамвай'},
-    {kind:'end',   n:'11',  days:'23.11', ...CPT, desc:'60 км, 1 ч'},
-  ]},
-4: { name:'По подтверждённым бронированиям', color:'#9b59b6',
+const route = { name:'По подтверждённым бронированиям', color:'#9b59b6',
   stops:[
     {kind:'start', n:'1–3', days:'13–15.11 · 3 ночи', place:'Кейптаун · 10 Hospital Street', lat:-33.9150439, lng:18.4207844, desc:'Подтверждённая бронь · Home in Cape Town · хозяин Jayson'},
     {kind:'night', n:'4–6', days:'16–18.11 · 3 ночи', place:'De Kelders · 142 De Villiers Street', lat:-34.5542352, lng:19.3687153, desc:'Подтверждённая бронь · Home in De Kelders · хозяин Ethan · из Кейптауна: 162 км · ≈2 ч 16 мин'},
     {kind:'night', n:'7–9', days:'19–21.11 · 3 ночи', place:'Плеттенберг-Бей · 9 Pharos Avenue', lat:-34.0623365, lng:23.3734005, desc:'Подтверждённая бронь · Home in Plettenberg Bay · хозяин Jonathan · из De Kelders: 440 км · ≈5 ч 28 мин'},
     {kind:'end',   n:'10–11', days:'22–24.11 · 2 ночи', place:'Кейптаун · временная точка', lat:-33.9249, lng:18.4241, desc:'Бронь ещё не выбрана; точка поставлена в центре Кейптауна · из Плеттенберг-Бея: 523 км · ≈6 ч 25 мин'},
-  ]}
-};
+  ]};
 
 // ── MAP ─────────────────────────────────────
 const map = L.map('map').setView([-33.8, 20], 8);
@@ -237,7 +184,7 @@ function animateRoute(r, full, stopIdx) {
 // ── SELECT ROUTE ────────────────────────────
 function setStatus(t){ const s=document.getElementById('status'); s.textContent=t; s.classList.add('show'); }
 
-async function selectRoute(id, btn) {
+async function renderRoute() {
   if(anim){ cancelAnimationFrame(anim); anim = null; }
   Object.keys(layers).forEach(k=>{
     if(k==='markers'){ layers.markers.forEach(m=>map.removeLayer(m)); layers.markers=[]; }
@@ -245,10 +192,7 @@ async function selectRoute(id, btn) {
   });
   map.closePopup();
 
-  document.querySelectorAll('.btn').forEach(b=>{b.classList.remove('active','v1','v2','v3','v4');});
-  btn.classList.add('active','v'+id);
-
-  const r = routes[id];
+  const r = route;
 
   const dayLegend = r.stops.some(s=>s.kind==='day')
     ? ` &nbsp; <span style="color:#e67e22">★</span> дневной заезд`
@@ -283,7 +227,7 @@ async function selectRoute(id, btn) {
 }
 
 // ── INIT ───────────────────────────────────
-selectRoute(1, document.querySelector('.btn.v1'));
+renderRoute();
 </script>
 </body>
 </html>
