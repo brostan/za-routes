@@ -66,12 +66,12 @@ const route = { name:'По подтверждённым бронирования
     {kind:'start', n:'1–3', days:'13–15.11 · 3 ночи', place:'Кейптаун · 10 Hospital Street', lat:-33.9150439, lng:18.4207844, desc:'Подтверждённая бронь · Home in Cape Town · хозяин Jayson'},
     {kind:'night', n:'4–6', days:'16–18.11 · 3 ночи', place:'De Kelders · 142 De Villiers Street', lat:-34.5542352, lng:19.3687153, desc:'Подтверждённая бронь · Home in De Kelders · хозяин Ethan · из Кейптауна: 162 км · ≈2 ч 16 мин'},
     {kind:'night', n:'7–9', days:'19–21.11 · 3 ночи', place:'Плеттенберг-Бей · 9 Pharos Avenue', lat:-34.0623365, lng:23.3734005, desc:'Подтверждённая бронь · Home in Plettenberg Bay · хозяин Jonathan · из De Kelders: 440 км · ≈5 ч 28 мин'},
-    {kind:'end',   n:'10–11', days:'22–24.11 · 2 ночи', place:'Кейптаун · временная точка', lat:-33.9249, lng:18.4241, desc:'Бронь ещё не выбрана; точка поставлена в центре Кейптауна · из Плеттенберг-Бея: 523 км · ≈6 ч 25 мин'},
+    {kind:'end',   n:'10–11', days:'22–24.11 · 2 ночи', place:'Кейптаун · Sea Point · 1 Albany Road', lat:-33.9145384, lng:18.3924970, desc:'Подтверждённая бронь · Apartments by Morea Sea Point · 2 ночи / 3 взрослых / 24 · из Плеттенберг-Бея: 527 км · ≈6 ч 30 мин'},
   ]};
 
 // ── MAP ─────────────────────────────────────
 const map = L.map('map').setView([-33.8, 20], 8);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=cb1_3xnm_1_935f45042a28a5a09a8c25e7', {
   attribution:'&copy; CartoDB', maxZoom:16
 }).addTo(map);
 
