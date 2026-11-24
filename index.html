@@ -14,6 +14,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 #map { position:fixed; top:0; left:0; right:0; bottom:0; z-index:1; }
 .status { position:fixed; top:64px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.95); border:1px solid #ddd; border-radius:10px; padding:6px 16px; font-size:0.8em; color:#333; display:none; box-shadow:0 1px 6px rgba(0,0,0,0.1); }
 .status.show { display:block; }
+.distance-panel { position:fixed; top:64px; left:10px; z-index:2000; min-width:190px; padding:12px 14px; color:#f8fbff; background:linear-gradient(145deg,rgba(22,28,45,.94),rgba(49,38,82,.90)); border:1px solid rgba(255,255,255,.16); border-radius:14px; box-shadow:0 10px 28px rgba(20,17,40,.28), inset 0 1px 0 rgba(255,255,255,.12); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+.distance-caption { margin-bottom:3px; color:rgba(232,237,255,.66); font-size:9px; font-weight:700; letter-spacing:.11em; text-transform:uppercase; }
+.distance-value { display:flex; align-items:baseline; gap:5px; font-variant-numeric:tabular-nums; }
+.distance-value strong { font-size:21px; font-weight:750; letter-spacing:-.045em; line-height:1.05; transition:filter .18s ease; }
+.distance-value span { color:rgba(235,238,255,.68); font-size:11px; font-weight:600; }
+.distance-separator { height:1px; margin:10px 0 9px; background:linear-gradient(90deg,rgba(255,255,255,.22),transparent); }
+.distance-segment { color:#cfc5ff; }
+.distance-panel.is-moving .distance-value strong { filter:brightness(1.3); }
 .info-panel { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:2000; background:rgba(255,255,255,0.97); border-radius:12px; padding:12px 18px; box-shadow:0 2px 16px rgba(0,0,0,0.18); border:1px solid #e0e3e8; max-width:94vw; display:none; }
 .info-panel.show { display:block; }
 .info-toggle { appearance:none; border:0; background:transparent; color:#1a1a2e; cursor:pointer; font:inherit; padding:0; text-align:left; width:100%; }
@@ -27,6 +35,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
   .header { padding:11px 12px; }
   .header h1 { font-size:0.9em; overflow:hidden; text-overflow:ellipsis; }
   .status { top:52px; max-width:calc(100vw - 24px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .distance-panel { top:61px; left:8px; min-width:166px; padding:10px 11px; border-radius:12px; }
+  .distance-value strong { font-size:18px; }
   .legend { top:62px; right:8px; padding:5px 9px; font-size:0.68em; }
   .info-panel { left:8px; right:8px; bottom:8px; transform:none; max-width:none; padding:0; border-radius:10px; overflow:hidden; }
   .info-toggle { display:flex; min-height:46px; align-items:center; justify-content:space-between; padding:10px 12px; }
@@ -51,6 +61,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 </div>
 <div id="map"></div>
 <div class="status" id="status"></div>
+<aside class="distance-panel" id="distancePanel" aria-live="polite">
+  <div class="distance-caption">Всего пройдено</div>
+  <div class="distance-value"><strong id="totalDistance">0,0</strong><span id="totalDistanceMax">/ — км</span></div>
+  <div class="distance-separator"></div>
+  <div class="distance-caption">Текущий участок</div>
+  <div class="distance-value distance-segment"><strong id="segmentDistance">0,0</strong><span id="segmentDistanceMax">/ — км</span></div>
+</aside>
 <div class="legend show" id="legend"></div>
 <div class="info-panel show" id="info"></div>
 
@@ -99,8 +116,11 @@ function fetchSegment(a, b) {
     if(!r.ok) throw new Error('OSRM '+r.status);
     return r.json();
   }).then(j => {
-    return j.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-  }).catch(() => [[a.lat,a.lng],[b.lat,b.lng]]);
+    return { points:j.routes[0].geometry.coordinates.map(c => [c[1], c[0]]), distance:j.routes[0].distance };
+  }).catch(() => {
+    const points = [[a.lat,a.lng],[b.lat,b.lng]];
+    return { points, distance:map.distance(points[0],points[1]) };
+  });
 }
 
 async function buildPath(r) {
@@ -111,7 +131,7 @@ async function buildPath(r) {
   const full = [];
   const stopIdx = [];
   for(let i=0;i<segments.length;i++){
-    const seg = segments[i];
+    const seg = segments[i].points;
     if(i===0){
       stopIdx.push(0);
       for(const c of seg) full.push(c);
@@ -121,11 +141,11 @@ async function buildPath(r) {
     }
   }
   stopIdx.push(full.length-1);
-  return { full, stopIdx };
+  return { full, stopIdx, distances:segments.map(s=>s.distance) };
 }
 
 // ── ANIMATION ───────────────────────────────
-function animateRoute(r, full, stopIdx) {
+function animateRoute(r, full, stopIdx, segmentDistances) {
   layers.faint = L.polyline(full, { color:r.color, weight:3, opacity:0.22, dashArray:'3 6' }).addTo(map);
   layers.glow = L.polyline([], { color:r.color, weight:13, opacity:0.28, lineCap:'round', lineJoin:'round' }).addTo(map);
   layers.core = L.polyline([], { color:r.color, weight:4.5, opacity:1, lineCap:'round', lineJoin:'round' }).addTo(map);
@@ -135,8 +155,25 @@ function animateRoute(r, full, stopIdx) {
   const total = cum[cum.length-1];
   const stopPos = stopIdx.map(i => cum[i]);
 
-  const mps = total / 10000;
+  const mps = total / 20000;
   const pauseMs = 1400;
+
+  const totalEl = document.getElementById('totalDistance');
+  const totalMaxEl = document.getElementById('totalDistanceMax');
+  const segmentEl = document.getElementById('segmentDistance');
+  const segmentMaxEl = document.getElementById('segmentDistanceMax');
+  const distancePanel = document.getElementById('distancePanel');
+  const formatKm = meters => (meters / 1000).toLocaleString('ru-RU', {minimumFractionDigits:1, maximumFractionDigits:1});
+  totalMaxEl.textContent = `/ ${formatKm(total)} км`;
+  segmentMaxEl.textContent = `/ ${formatKm(segmentDistances[0])} км`;
+  function updateDistances(){
+    const section = Math.min(nextStop - 1, segmentDistances.length - 1);
+    const sectionStart = stopPos[section];
+    totalEl.textContent = formatKm(Math.min(pos, total));
+    segmentEl.textContent = formatKm(Math.max(0, Math.min(pos, stopPos[section+1]) - sectionStart));
+    segmentMaxEl.textContent = `/ ${formatKm(segmentDistances[section])} км`;
+    distancePanel.classList.add('is-moving');
+  }
 
   let pos = 0, idx = 0, lastTs = null;
   let pausing = false, pauseStart = 0;
@@ -170,6 +207,7 @@ function animateRoute(r, full, stopIdx) {
       pos = stopPos[nextStop];
       idx = stopIdx[nextStop];
       apply();
+      updateDistances();
       if(layers.markers[nextStop]) layers.markers[nextStop].openPopup();
       pausing = true; pauseStart = ts;
       nextStop++;
@@ -184,6 +222,7 @@ function animateRoute(r, full, stopIdx) {
 
     while(idx < full.length-1 && cum[idx+1] <= pos) idx++;
     apply();
+    updateDistances();
 
     if(pos >= total){
       if(layers.markers[layers.markers.length-1]) layers.markers[layers.markers.length-1].openPopup();
@@ -240,10 +279,10 @@ async function renderRoute() {
 
   setStatus('Строим маршрут по дорогам (OSRM)...');
   try {
-    const { full, stopIdx } = await buildPath(r);
+    const { full, stopIdx, distances } = await buildPath(r);
     setStatus('Поехали →');
     map.fitBounds(L.polyline(full).getBounds().pad(0.15));
-    animateRoute(r, full, stopIdx);
+    animateRoute(r, full, stopIdx, distances);
   } catch(e){
     setStatus('Ошибка загрузки маршрута: ' + e.message);
   }
